@@ -5,6 +5,7 @@ import UIKit
 internal class DefaultSimultaneouslyScrollViewHandler: NSObject, SimultaneouslyScrollViewHandler {
     private var scrollViewsStore: [ScrollViewDecorator] = []
     private weak var lastScrollingScrollView: UIScrollView?
+    private var lastContentOffset: CGPoint = .zero
 
     private let scrolledToBottomSubject = PassthroughSubject<Bool, Never>()
 
@@ -18,24 +19,19 @@ internal class DefaultSimultaneouslyScrollViewHandler: NSObject, SimultaneouslyS
 
     func register(scrollView: UIScrollView, scrollDirections: SimultaneouslyScrollViewDirection?) {
         guard !scrollViewsStore.contains(where: { $0.scrollView == scrollView }) else {
+            // just because the scroll view exist doesn't gaurentee its offset is synced
+            scrollView.contentOffset = lastContentOffset
             return
         }
 
         scrollView.delegate = self
+        scrollView.contentOffset = lastContentOffset
         scrollViewsStore.append(
             ScrollViewDecorator(
                 scrollView: scrollView,
                 directions: scrollDirections
             )
         )
-
-        // Scroll the new `ScrollView` to the current position of the others.
-        // Using the first `ScrollView` should be enough as all should be synchronized at this point already.
-        guard let decorator = scrollViewsStore.first else {
-            return
-        }
-
-        sync(scrollView: scrollView, with: decorator)
 
         checkIsContentOffsetAtBottom()
     }
@@ -98,6 +94,7 @@ extension DefaultSimultaneouslyScrollViewHandler: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        lastContentOffset = scrollView.contentOffset
         checkIsContentOffsetAtBottom()
 
         guard lastScrollingScrollView == scrollView else {
