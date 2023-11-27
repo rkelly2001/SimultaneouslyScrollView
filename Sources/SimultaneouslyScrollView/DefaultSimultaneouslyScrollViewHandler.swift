@@ -92,9 +92,12 @@ extension DefaultSimultaneouslyScrollViewHandler: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         lastScrollingScrollView = scrollView
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        lastContentOffset = scrollView.contentOffset
+    }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        lastContentOffset = scrollView.contentOffset
         checkIsContentOffsetAtBottom()
 
         guard lastScrollingScrollView == scrollView else {
