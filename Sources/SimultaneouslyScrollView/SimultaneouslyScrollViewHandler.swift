@@ -11,7 +11,10 @@ public protocol SimultaneouslyScrollViewHandler {
 #if os(iOS) || os(tvOS)
     /// Publisher to notify if the `ScrollView`s are scrolled to the bottom
     var scrolledToBottomPublisher: AnyPublisher<Bool, Never> { get }
-
+    
+    /// gets the current content offset
+    var contentOffset: CGPoint { get }
+    
     /// Adds the `ScrollView` to a list and keep the content offset in sync.
     /// When any registered `ScrollView` will be scrolled all other registered `ScrollView` will adjust
     /// its content offset automatically.

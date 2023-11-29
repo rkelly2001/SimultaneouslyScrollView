@@ -9,6 +9,10 @@ internal class DefaultSimultaneouslyScrollViewHandler: NSObject, SimultaneouslyS
 
     private let scrolledToBottomSubject = PassthroughSubject<Bool, Never>()
 
+    var contentOffset: CGPoint {
+        return lastContentOffset
+    }
+    
     var scrolledToBottomPublisher: AnyPublisher<Bool, Never> {
         scrolledToBottomSubject.eraseToAnyPublisher()
     }
