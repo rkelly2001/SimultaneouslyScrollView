@@ -108,6 +108,7 @@ extension DefaultSimultaneouslyScrollViewHandler: UIScrollViewDelegate {
             return
         }
 
+        lastContentOffset = scrollView.contentOffset
         scrollViewsStore
             .filter { $0.scrollView != lastScrollingScrollView }
             .forEach { sync(scrollView: scrollView, with: $0) }
